@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Student Management</h1>
+    <div id="student-form">
+        <input type="number" id="student-id" placeholder="ID" required>
+        <input type="text" id="student-name" placeholder="Name" required>
+        <input type="number" id="student-grade" placeholder="Grade" required>
+        <div class="buttons">
+            <button onclick="addStudent()">Add Student</button>
+            <button onclick="updateStudent()">Update Student</button>
+            <button onclick="getStudent()">Get Student</button>
+            <button onclick="deleteStudent()">Delete Student</button>
+        </div>
+    </div>
+    <div id="students-list"></div>
+    <script src="scripts.js"></script>
+</body>
+</html>
