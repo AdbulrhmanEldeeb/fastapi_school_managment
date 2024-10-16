@@ -1,43 +1,55 @@
-from fastapi import APIRouter , HTTPException , Query 
-from .schemes import Student 
+from fastapi import APIRouter, HTTPException, Query
+from .schemes import Student
 from database import ManageStudent  
 import os
 
-# db_dir_path=r'F:\programing\fast_api\school_system\src\database'
-
+# Define the base directory of the current file
 base_dir = os.path.dirname(__file__)
+# Define the relative path to the database directory
 relative_db_path = os.path.join(base_dir, '..', 'database')
-# absolute_db_path = os.path.abspath(relative_db_path)
-db_dir_path=relative_db_path
-base_router=APIRouter() 
+# db_dir_path points to the database location
+db_dir_path = relative_db_path
 
-@base_router.get('/data',response_model=Student)
-async def get_data(id : int=Query(...,gt=0,description="identifier of student")) -> Student:
+# Initialize the APIRouter to handle routes for managing students
+base_router = APIRouter() 
 
-    # student=dbmanger.db_get_student_data(student_id=id,db_dir_path=db_dir_path)
-    student=ManageStudent(db_dir_path=db_dir_path).db_get_student_data(student_id=id)
-    if student is None : 
-        raise  HTTPException(status_code=404,detail='this id is not in data')
+@base_router.get('/data', response_model=Student)
+async def get_data(id: int = Query(..., gt=0, description="identifier of student")) -> Student:
+    """
+    Retrieve student data by ID.
+    If no student is found, an HTTP 404 exception is raised.
+    """
+    student = ManageStudent(db_dir_path=db_dir_path).db_get_student_data(student_id=id)
+    if student is None: 
+        raise HTTPException(status_code=404, detail='this id is not in data')
 
     return student
 
-@base_router.post('/add_student',response_model=Student)
-async def add_student(student_data:Student)->Student: 
-    # dbmanger.db_add_student(student_data.dict(),db_dir_path=db_dir_path)
+@base_router.post('/add_student', response_model=Student)
+async def add_student(student_data: Student) -> Student: 
+    """
+    Add a new student to the database.
+    Accepts a Student object and returns the same object on success.
+    """
     ManageStudent(db_dir_path=db_dir_path).db_add_student(student=student_data.dict())
-    return student_data 
+    return student_data
     
-@base_router.put('/update_student',response_model=Student)
-async def update_student(updated_student_data:Student)-> Student:
-    # dbmanger.db_update_student(updated_student_data.dict(),db_dir_path=db_dir_path)
+@base_router.put('/update_student', response_model=Student)
+async def update_student(updated_student_data: Student) -> Student:
+    """
+    Update existing student information in the database.
+    Accepts a Student object with updated data and returns the updated object.
+    """
     ManageStudent(db_dir_path=db_dir_path).db_update_student(student=updated_student_data.dict())
     return updated_student_data
 
-
 @base_router.delete('/delete_student')
-async def delete_student(id : int = Query(...,gt=0,description="identifier of student")):
-    # dbmanger.db_delete_student(id,db_dir_path=db_dir_path)
+async def delete_student(id: int = Query(..., gt=0, description="identifier of student")):
+    """
+    Delete a student from the database using their ID.
+    If the student is successfully deleted, return a success message.
+    """
     ManageStudent(db_dir_path=db_dir_path).db_delete_student(student_id=id)
     return {
-        'message':f"student with id {id} was deleted successfully"
-        }
+        'message': f"student with id {id} was deleted successfully"
+    }
