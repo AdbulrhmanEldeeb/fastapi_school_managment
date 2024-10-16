@@ -1,6 +1,6 @@
 from fastapi import APIRouter , HTTPException , Query 
 from .schemes import Student 
-from database import dbmanger
+from database import ManageStudent  
 import os
 
 # db_dir_path=r'F:\programing\fast_api\school_system\src\database'
@@ -13,7 +13,9 @@ base_router=APIRouter()
 
 @base_router.get('/data',response_model=Student)
 async def get_data(id : int=Query(...,gt=0,description="identifier of student")) -> Student:
-    student=dbmanger.db_get_student_data(student_id=id,db_dir_path=db_dir_path)
+
+    # student=dbmanger.db_get_student_data(student_id=id,db_dir_path=db_dir_path)
+    student=ManageStudent(db_dir_path=db_dir_path).db_get_student_data(student_id=id)
     if student is None : 
         raise  HTTPException(status_code=404,detail='this id is not in data')
 
@@ -21,19 +23,21 @@ async def get_data(id : int=Query(...,gt=0,description="identifier of student"))
 
 @base_router.post('/add_student',response_model=Student)
 async def add_student(student_data:Student)->Student: 
-    dbmanger.db_add_student(student_data.dict(),db_dir_path=db_dir_path)
+    # dbmanger.db_add_student(student_data.dict(),db_dir_path=db_dir_path)
+    ManageStudent(db_dir_path=db_dir_path).db_add_student(student=student_data.dict())
     return student_data 
     
 @base_router.put('/update_student',response_model=Student)
 async def update_student(updated_student_data:Student)-> Student:
-    dbmanger.db_update_student(updated_student_data.dict(),db_dir_path=db_dir_path)
-    
+    # dbmanger.db_update_student(updated_student_data.dict(),db_dir_path=db_dir_path)
+    ManageStudent(db_dir_path=db_dir_path).db_update_student(student=updated_student_data.dict())
     return updated_student_data
 
 
 @base_router.delete('/delete_student')
 async def delete_student(id : int = Query(...,gt=0,description="identifier of student")):
-    dbmanger.db_delete_student(id,db_dir_path=db_dir_path)
+    # dbmanger.db_delete_student(id,db_dir_path=db_dir_path)
+    ManageStudent(db_dir_path=db_dir_path).db_delete_student(student_id=id)
     return {
         'message':f"student with id {id} was deleted successfully"
         }
